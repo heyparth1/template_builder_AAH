@@ -74,13 +74,11 @@ The application will start at `http://localhost:5000`.
 5.  Download the generated Template.
 
 ### 3. Workflow B: Fill a Template
-*Use this when you have a new client's data (PDF) and want to generate a report.*
 
 1.  Go to the **"Fill Template"** tab.
-2.  Upload your **Template DOCX** (created in step A).
-3.  The system will show you the required placeholders.
-4.  Upload the **Source PDF** (e.g., `New_Client_Factfind.pdf`) for the relevant sections.
-5.  Click **"Process"**. The system will:
+2.  The system will show you the required placeholders.
+3.  Upload the **Source PDF** (e.g., `New_Client_Factfind.pdf`) for the relevant sections.
+4.  Click **"Process"**. The system will:
     *   Read the PDF.
     *   Find the best content for each placeholder.
     *   Generate a final, filled DOCX file.
