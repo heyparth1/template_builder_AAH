@@ -49,9 +49,9 @@ graph TD
     Create a `.env` file in the `backend` directory with your API keys:
     ```ini
     GOOGLE_API_KEY=your_gemini_key
-    # Optional: Databricks credentials if using Databricks integration
     DATABRICKS_HOST=...
     DATABRICKS_TOKEN=...
+    DATABRICKS_HTTP_PATH=...
     ```
 
 ## 📖 How to Use
