@@ -1,0 +1,84 @@
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_171907.docx
+Placeholder mappings from frontend: {'RISK_STATEMENT': True}
+Request files: ['pdf_RISK_STATEMENT']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_172425.docx
+Placeholder mappings from frontend: {'RISK_STATEMENT': True}
+Request files: ['pdf_RISK_STATEMENT']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_174606.docx
+Placeholder mappings from frontend: {'RISK_EMERGING_MARKETS': True, 'RISK_HIGHER_FLUCTUATION': True, 'RISK_LOWER_RETURN': True, 'RISK_MISSED_GAINS': True, 'RISK_OVERSEAS_ASSETS': True}
+Request files: ['pdf_RISK_EMERGING_MARKETS', 'pdf_RISK_HIGHER_FLUCTUATION', 'pdf_RISK_LOWER_RETURN', 'pdf_RISK_MISSED_GAINS', 'pdf_RISK_OVERSEAS_ASSETS']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_175633.docx
+Placeholder mappings from frontend: {'RISKS_INTRO': True, 'RISK_CHANGE_DETAIL': True, 'RISK_CHARGES_1': True, 'RISK_CHARGES_2': True, 'RISK_CURRENCY': True, 'RISK_EMERGING_MARKETS': True, 'RISK_HIGHER_FLUCTUATION': True, 'RISK_LOWER_RETURN': True, 'RISK_MISSED_GAINS': True, 'RISK_PROFILE_ASSESSMENT': True, 'RISK_TRANSITION': True}
+Request files: ['pdf_RISKS_INTRO', 'pdf_RISK_CHANGE_DETAIL', 'pdf_RISK_CHARGES_1', 'pdf_RISK_CHARGES_2', 'pdf_RISK_CURRENCY', 'pdf_RISK_EMERGING_MARKETS', 'pdf_RISK_HIGHER_FLUCTUATION', 'pdf_RISK_LOWER_RETURN', 'pdf_RISK_MISSED_GAINS', 'pdf_RISK_PROFILE_ASSESSMENT', 'pdf_RISK_TRANSITION']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_180751.docx
+Placeholder mappings from frontend: {'RISK_CHANGE_DETAIL': True, 'RISK_PROFILE_ANALYSIS': True, 'RISK_WARNING_EMERGING_MARKETS': True, 'RISK_WARNING_HIGHER_RISK': True, 'RISK_WARNING_LOWER_RISK': True}
+Request files: ['pdf_RISK_CHANGE_DETAIL', 'pdf_RISK_PROFILE_ANALYSIS', 'pdf_RISK_WARNING_EMERGING_MARKETS', 'pdf_RISK_WARNING_HIGHER_RISK', 'pdf_RISK_WARNING_LOWER_RISK']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_182721.docx
+Placeholder mappings from frontend: {'RISKS_INTRO': True, 'RISK_RECOMMENDATION': True, 'RISK_TABLE_INTRO': True, 'RISK_WARNING_EMERGING_MARKETS': True, 'RISK_WARNING_HIGHER_RISK': True, 'RISK_WARNING_LOWER_RISK': True, 'RISK_WARNING_MISSED_GAINS': True, 'RISK_WARNING_OVERSEAS': True}
+Request files: ['pdf_RISKS_INTRO', 'pdf_RISK_RECOMMENDATION', 'pdf_RISK_TABLE_INTRO', 'pdf_RISK_WARNING_EMERGING_MARKETS', 'pdf_RISK_WARNING_HIGHER_RISK', 'pdf_RISK_WARNING_LOWER_RISK', 'pdf_RISK_WARNING_MISSED_GAINS', 'pdf_RISK_WARNING_OVERSEAS']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_183104.docx
+Placeholder mappings from frontend: {'RISKS_INTRO': True, 'RISK_EMERGING_MARKETS': True, 'RISK_HIGHER_VOLATILITY': True, 'RISK_LOWER_RETURN': True, 'RISK_MISSED_GAINS': True, 'RISK_PROFILE_ASSESSMENT': True, 'RISK_TRANSITION': True}
+Request files: ['pdf_RISKS_INTRO', 'pdf_RISK_EMERGING_MARKETS', 'pdf_RISK_HIGHER_VOLATILITY', 'pdf_RISK_LOWER_RETURN', 'pdf_RISK_MISSED_GAINS', 'pdf_RISK_PROFILE_ASSESSMENT', 'pdf_RISK_TRANSITION']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_183545.docx
+Placeholder mappings from frontend: {'CLIENT_GOAL_PARAGRAPH': True, 'CLIENT_NAMES': True, 'CLIENT_SPENDING_GOAL': True}
+Request files: ['pdf_CLIENT_GOAL_PARAGRAPH', 'pdf_CLIENT_NAMES', 'pdf_CLIENT_SPENDING_GOAL']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_190436.docx
+Placeholder mappings from frontend: {'CLIENT_GOAL_PARAGRAPH_1': True, 'CLIENT_GOAL_PARAGRAPH_2': True, 'CLIENT_NAMES': True, 'SCENARIO_1': True, 'SCENARIO_2': True, 'SCENARIO_3': True}
+Request files: ['pdf_CLIENT_GOAL_PARAGRAPH_1', 'pdf_CLIENT_GOAL_PARAGRAPH_2', 'pdf_CLIENT_NAMES', 'pdf_SCENARIO_1', 'pdf_SCENARIO_2', 'pdf_SCENARIO_3']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_191907.docx
+Placeholder mappings from frontend: {'CLIENT_GOAL_RETIREMENT': True, 'CLIENT_GOAL_SPENDING': True, 'CLIENT_NAMES': True}
+Request files: ['pdf_CLIENT_GOAL_RETIREMENT', 'pdf_CLIENT_GOAL_SPENDING', 'pdf_CLIENT_NAMES']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_195354.docx
+Placeholder mappings from frontend: {'CLIENT_GOAL_PARAGRAPH': True, 'CLIENT_NAMES': True, 'CLIENT_SPENDING_GOAL': True}
+Request files: ['pdf_CLIENT_GOAL_PARAGRAPH', 'pdf_CLIENT_NAMES', 'pdf_CLIENT_SPENDING_GOAL']
+
+============================================================
+FILL-PLACEHOLDERS ENDPOINT HIT
+============================================================
+Template file: template_20260207_200715.docx
+Placeholder mappings from frontend: {'CLIENT_CONCERN_1': True, 'CLIENT_CONCERN_3': True, 'CLIENT_GOAL_PARAGRAPH': True, 'CLIENT_NAMES': True}
+Request files: ['pdf_CLIENT_CONCERN_1', 'pdf_CLIENT_CONCERN_3', 'pdf_CLIENT_GOAL_PARAGRAPH', 'pdf_CLIENT_NAMES']

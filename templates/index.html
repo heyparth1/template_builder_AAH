@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Placeholder Pipeline</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📄 Document Placeholder Pipeline</h1>
+            <p>Process documents, create placeholders, and fill them with PDF content</p>
+        </header>
+
+        <!-- Step Indicator -->
+        <div class="steps">
+            <div class="step active" data-step="1">
+                <div class="step-num">1</div>
+                <div class="step-label">Select Document</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-num">2</div>
+                <div class="step-label">Review Placeholders</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-num">3</div>
+                <div class="step-label">Map PDFs</div>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-num">4</div>
+                <div class="step-label">Download</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Select Document -->
+        <div class="step-content active" id="step1">
+            <h2>Step 1: Select Document</h2>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="databricks">From Databricks</button>
+                <button class="tab" data-tab="upload">Upload New</button>
+                <button class="tab" data-tab="existing">Use Existing Template</button>
+            </div>
+
+            <!-- Databricks Files -->
+            <div class="tab-content active" id="tab-databricks">
+                <div class="info-box">
+                    <strong>Databricks Volume:</strong> /Volumes/workspace/default/test/
+                </div>
+                <button class="btn btn-secondary" onclick="loadDatabricksFiles()">🔄 Refresh Files</button>
+                <div id="databricks-files" class="file-list">
+                    <p class="loading">Loading files...</p>
+                </div>
+            </div>
+
+            <!-- Upload New -->
+            <div class="tab-content" id="tab-upload">
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="docx-upload" accept=".docx" hidden>
+                    <div class="upload-content">
+                        <span class="upload-icon">📁</span>
+                        <p>Drag & drop a DOCX file here or <label for="docx-upload" class="link">browse</label></p>
+                        <p class="hint">This will process the document and create placeholders</p>
+                    </div>
+                </div>
+                <div id="upload-status"></div>
+            </div>
+
+            <!-- Existing Template -->
+            <div class="tab-content" id="tab-existing">
+                <div class="upload-zone" id="template-zone">
+                    <input type="file" id="template-upload" accept=".docx" hidden>
+                    <div class="upload-content">
+                        <span class="upload-icon">📋</span>
+                        <p>Upload a template that already has placeholders</p>
+                        <label for="template-upload" class="btn btn-secondary">Select Template</label>
+                        <p class="hint">e.g., a document with {{RISK_STATEMENT}}, {{GOALS}} etc.</p>
+                    </div>
+                </div>
+                <div id="template-status"></div>
+            </div>
+        </div>
+
+        <!-- Step 2: Review Placeholders -->
+        <div class="step-content" id="step2">
+            <h2>Step 2: Review Placeholders</h2>
+            <div id="placeholders-loading" class="loading-box" style="display:none;">
+                <div class="spinner"></div>
+                <p>Processing document and creating placeholders...</p>
+            </div>
+            <div id="placeholders-result" style="display:none;">
+                <div class="success-box" id="process-stats"></div>
+                <h3>Detected Placeholders:</h3>
+                <div id="placeholders-list" class="placeholders-list"></div>
+                <div class="actions">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+                    <div class="action-group">
+                        <button class="btn btn-secondary" id="download-template-btn" onclick="downloadTemplate()">📥
+                            Download Template</button>
+                        <button class="btn btn-primary" onclick="goToStep(3)">Continue to PDF Mapping →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Map PDFs -->
+        <div class="step-content" id="step3">
+            <h2>Step 3: Map PDFs to Placeholders</h2>
+            <p>Upload a PDF file for each placeholder you want to fill:</p>
+            <div id="pdf-mapping" class="pdf-mapping"></div>
+            <div id="fill-loading" class="loading-box" style="display:none;">
+                <div class="spinner"></div>
+                <p>Processing with GPT... extracting relevant content...</p>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
+                <button class="btn btn-primary" id="fill-btn" onclick="fillPlaceholders()">🚀 Fill Placeholders</button>
+            </div>
+        </div>
+
+        <!-- Step 4: Download -->
+        <div class="step-content" id="step4">
+            <h2>Step 4: Download Result</h2>
+            <div id="result-box" class="result-box">
+                <div class="success-icon">✅</div>
+                <h3>Document Ready!</h3>
+                <div id="fill-stats"></div>
+                <div id="fill-details"></div>
+                <button class="btn btn-primary btn-large" id="download-btn">📥 Download Document</button>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="resetWizard()">Process Another Document</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentStep = 1;
+        let templateFile = null;
+        let placeholders = [];
+        let outputFile = null;
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tabId).classList.add('active');
+            });
+        });
+
+        // Go to step
+        function goToStep(step) {
+            currentStep = step;
+            document.querySelectorAll('.step').forEach(s => {
+                s.classList.remove('active', 'completed');
+                if (parseInt(s.dataset.step) < step) s.classList.add('completed');
+                if (parseInt(s.dataset.step) === step) s.classList.add('active');
+            });
+            document.querySelectorAll('.step-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+        }
+
+        // Load Databricks files
+        async function loadDatabricksFiles() {
+            const container = document.getElementById('databricks-files');
+            container.innerHTML = '<p class="loading">Loading files...</p>';
+
+            try {
+                const res = await fetch('/api/databricks/files');
+                const data = await res.json();
+
+                if (data.success && data.files.length > 0) {
+                    container.innerHTML = data.files.map(f => `
+                        <div class="file-item" onclick="selectDatabricksFile('${f.path}', '${f.name}')">
+                            <span class="file-icon">📄</span>
+                            <span class="file-name">${f.name}</span>
+                            <span class="file-size">${formatSize(f.size)}</span>
+                        </div>
+                    `).join('');
+
+                    if (data.mock) {
+                        container.innerHTML = '<div class="warning-box">⚠️ Demo mode (Databricks not connected)</div>' + container.innerHTML;
+                    }
+                } else {
+                    container.innerHTML = '<p>No files found in Databricks volume</p>';
+                }
+            } catch (e) {
+                container.innerHTML = '<p class="error">Failed to load files: ' + e.message + '</p>';
+            }
+        }
+
+        function formatSize(bytes) {
+            if (!bytes) return '';
+            const kb = bytes / 1024;
+            if (kb < 1024) return kb.toFixed(1) + ' KB';
+            return (kb / 1024).toFixed(1) + ' MB';
+        }
+
+        // Select Databricks file
+        async function selectDatabricksFile(path, name) {
+            document.querySelectorAll('.file-item').forEach(f => f.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            await processDocument(path, name);
+        }
+
+        // Handle file upload
+        document.getElementById('docx-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            document.getElementById('upload-status').innerHTML = '<p class="loading">Uploading...</p>';
+
+            try {
+                const res = await fetch('/api/databricks/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    await processDocument(data.local_path, data.filename);
+                } else {
+                    document.getElementById('upload-status').innerHTML = '<p class="error">' + data.error + '</p>';
+                }
+            } catch (e) {
+                document.getElementById('upload-status').innerHTML = '<p class="error">Upload failed: ' + e.message + '</p>';
+            }
+        });
+
+        // Handle template upload (existing template with placeholders)
+        document.getElementById('template-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            document.getElementById('template-status').innerHTML = '<p class="loading">Uploading template...</p>';
+
+            try {
+                const res = await fetch('/api/upload/template', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    templateFile = data.template_file;
+                    placeholders = data.placeholders;
+
+                    document.getElementById('template-status').innerHTML = '<p class="success">✅ Template uploaded successfully!</p>';
+
+                    showPlaceholders(data.placeholders, true);
+                    goToStep(2);
+                } else {
+                    document.getElementById('template-status').innerHTML = '<p class="error">' + data.error + '</p>';
+                }
+            } catch (e) {
+                document.getElementById('template-status').innerHTML = '<p class="error">Upload failed: ' + e.message + '</p>';
+            }
+        });
+
+        // Process document (create placeholders)
+        async function processDocument(filePath, fileName) {
+            goToStep(2);
+            document.getElementById('placeholders-loading').style.display = 'block';
+            document.getElementById('placeholders-result').style.display = 'none';
+
+            try {
+                const res = await fetch('/api/process/create-placeholders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_path: filePath })
+                });
+                const data = await res.json();
+
+                document.getElementById('placeholders-loading').style.display = 'none';
+
+                if (data.success) {
+                    templateFile = data.template_file;
+                    placeholders = data.placeholders;
+
+                    document.getElementById('process-stats').innerHTML = `
+                        <strong>✅ Template Created:</strong> ${data.template_file}<br>
+                        <strong>Replacements Applied:</strong> ${data.replacements_applied}<br>
+                        <strong>Failed:</strong> ${data.replacements_failed}
+                    `;
+
+                    showPlaceholders(data.placeholders, false);
+                    document.getElementById('placeholders-result').style.display = 'block';
+                } else {
+                    document.getElementById('placeholders-result').innerHTML = '<p class="error">Failed: ' + data.error + '</p>';
+                    document.getElementById('placeholders-result').style.display = 'block';
+                }
+            } catch (e) {
+                document.getElementById('placeholders-loading').style.display = 'none';
+                document.getElementById('placeholders-result').innerHTML = '<p class="error">Error: ' + e.message + '</p>';
+                document.getElementById('placeholders-result').style.display = 'block';
+            }
+        }
+
+        function showPlaceholders(placeholderList, isExisting) {
+            const container = document.getElementById('placeholders-list');
+
+            if (placeholderList.length === 0) {
+                container.innerHTML = '<p>No placeholders found in this document.</p>';
+                return;
+            }
+
+            container.innerHTML = placeholderList.map(p => `
+                <div class="placeholder-item">
+                    <span class="placeholder-tag">${p.placeholder}</span>
+                    ${p.category ? `<span class="placeholder-category">${p.category}</span>` : ''}
+                    ${p.original_preview ? `<p class="placeholder-preview">${p.original_preview}</p>` : ''}
+                </div>
+            `).join('');
+
+            // Also build the PDF mapping UI
+            buildPdfMapping(placeholderList);
+        }
+
+        function buildPdfMapping(placeholderList) {
+            const container = document.getElementById('pdf-mapping');
+
+            container.innerHTML = placeholderList.map(p => `
+                <div class="mapping-item">
+                    <div class="mapping-header">
+                        <input type="checkbox" id="check-${p.name}">
+                        <label for="check-${p.name}">
+                            <span class="placeholder-tag">${p.placeholder}</span>
+                        </label>
+                    </div>
+                    <div class="mapping-upload">
+                        <input type="file" id="pdf-${p.name}" accept=".pdf" class="pdf-input">
+                        <label for="pdf-${p.name}" class="btn btn-secondary btn-small">📎 Select PDF</label>
+                        <span class="file-selected" id="selected-${p.name}"></span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add file selection listeners
+            placeholderList.forEach(p => {
+                document.getElementById('pdf-' + p.name).addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    document.getElementById('selected-' + p.name).textContent = file ? file.name : '';
+
+                    // Auto-check that box if a file is selected
+                    if (file) {
+                        document.getElementById('check-' + p.name).checked = true;
+                    }
+                });
+            });
+        }
+
+        // Fill placeholders
+        async function fillPlaceholders() {
+            const formData = new FormData();
+            formData.append('template_file', templateFile);
+
+            const mappings = {};
+            let hasFiles = false;
+
+            placeholders.forEach(p => {
+                const checkbox = document.getElementById('check-' + p.name);
+                const fileInput = document.getElementById('pdf-' + p.name);
+
+                if (checkbox && checkbox.checked && fileInput && fileInput.files[0]) {
+                    mappings[p.name] = true;
+                    formData.append('pdf_' + p.name, fileInput.files[0]);
+                    hasFiles = true;
+                }
+            });
+
+            if (!hasFiles) {
+                alert('Please upload at least one PDF file');
+                return;
+            }
+
+            formData.append('mappings', JSON.stringify(mappings));
+
+            document.getElementById('fill-btn').disabled = true;
+            document.getElementById('fill-loading').style.display = 'block';
+
+            try {
+                const res = await fetch('/api/process/fill-placeholders', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                document.getElementById('fill-loading').style.display = 'none';
+                document.getElementById('fill-btn').disabled = false;
+
+                if (data.success) {
+                    outputFile = data.output_file;
+
+                    document.getElementById('fill-stats').innerHTML = `
+                        <p><strong>Placeholders Found:</strong> ${data.placeholders_found}</p>
+                        <p><strong>Placeholders Filled:</strong> ${data.placeholders_filled}</p>
+                    `;
+
+                    if (data.details && Object.keys(data.details).length > 0) {
+                        document.getElementById('fill-details').innerHTML = '<h4>Extracted Content:</h4>' +
+                            Object.entries(data.details).map(([k, v]) =>
+                                `<div class="detail-item"><strong>${k}:</strong> ${v}</div>`
+                            ).join('');
+                    }
+
+                    document.getElementById('download-btn').onclick = () => {
+                        window.location.href = '/api/download/' + outputFile;
+                    };
+
+                    goToStep(4);
+                } else {
+                    alert('Error: ' + (data.error || data.errors.join(', ')));
+                }
+            } catch (e) {
+                document.getElementById('fill-loading').style.display = 'none';
+                document.getElementById('fill-btn').disabled = false;
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // Reset wizard
+        function resetWizard() {
+            templateFile = null;
+            placeholders = [];
+            outputFile = null;
+            goToStep(1);
+
+            // Clear file inputs
+            document.querySelectorAll('input[type="file"]').forEach(input => input.value = '');
+            document.querySelectorAll('.file-selected').forEach(span => span.textContent = '');
+        }
+
+        // Download template with placeholders
+        function downloadTemplate() {
+            if (templateFile) {
+                window.location.href = '/api/download/' + templateFile;
+            } else {
+                alert('No template file available');
+            }
+        }
+
+        // Initialize
+        loadDatabricksFiles();
+    </script>
+</body>
+
+</html>
